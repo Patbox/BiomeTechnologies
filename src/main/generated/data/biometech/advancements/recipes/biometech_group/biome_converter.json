@@ -1,0 +1,73 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "biometech:biome_converter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "item_required": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:amethyst_block"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "item_required2": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:nether_star"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "item_required3": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:dispenser"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "item_use": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "biometech:biome_essence"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "item_required",
+      "item_required2",
+      "item_required3",
+      "item_use",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "biometech:biome_converter"
+    ]
+  }
+}

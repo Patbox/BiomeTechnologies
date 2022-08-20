@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "eu.pb4.biometech.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ArmorStandEntityAccessor",
+    "BiomeAccessAccessor",
+    "LootPoolAccessor",
+    "LootTableBuilderAccessor",
+    "SetCountLootFunctionAccessor",
+    "WanderingTraderEntityMixin"
+  ],
+  "client": [
+    "client.ModelPredicateProviderRegistryAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

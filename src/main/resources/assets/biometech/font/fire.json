@@ -1,0 +1,20 @@
+{
+    "providers": [
+        {
+            "type": "space",
+            "advances": {
+                ".": 108,
+                "-": -123
+            }
+        },
+        {
+            "type": "bitmap",
+            "file": "biometech:gui/fire.png",
+            "ascent": -59,
+            "height": 16,
+            "chars": [
+                "0123456789abc"
+            ]
+        }
+    ]
+}

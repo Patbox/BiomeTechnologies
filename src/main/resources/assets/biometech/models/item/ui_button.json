@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:item/handheld",
+  "overrides": [
+    {
+      "predicate": {
+        "texture": 0
+      },
+      "model": "biometech:gui/activate"
+    },
+    {
+      "predicate": {
+        "texture": 1
+      },
+      "model": "biometech:gui/activate_blocked"
+    },
+    {
+      "predicate": {
+        "texture": 2
+      },
+      "model": "biometech:gui/activate_off"
+    },
+    {
+      "predicate": {
+        "texture": 3
+      },
+      "model": "biometech:gui/plus"
+    },
+    {
+      "predicate": {
+        "texture": 4
+      },
+      "model": "biometech:gui/minus"
+    }
+  ]
+}

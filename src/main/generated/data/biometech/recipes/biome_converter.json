@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_block"
+    },
+    "C": {
+      "item": "minecraft:clay"
+    },
+    "O": {
+      "item": "minecraft:dispenser"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    },
+    "X": {
+      "item": "minecraft:cobbled_deepslate"
+    }
+  },
+  "pattern": [
+    "XOX",
+    "ASA",
+    "XCX"
+  ],
+  "result": {
+    "item": "biometech:biome_converter"
+  }
+}

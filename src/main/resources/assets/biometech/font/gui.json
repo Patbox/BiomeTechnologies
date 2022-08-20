@@ -1,0 +1,20 @@
+{
+    "providers": [
+        {
+            "type": "space",
+            "advances": {
+                ".": -170,
+                "-": -8
+            }
+        },
+        {
+            "type": "bitmap",
+            "file": "biometech:gui/gui.png",
+            "ascent": 13,
+            "height": 256,
+            "chars": [
+                "0"
+            ]
+        }
+    ]
+}

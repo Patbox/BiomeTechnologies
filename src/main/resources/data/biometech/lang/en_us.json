@@ -1,0 +1,19 @@
+{
+  "block.biometech.biome_converter": "Biome Converter",
+  "item.biometech.biome_essence": "Biome Essence (%s)",
+  "gui.biometech.close": "Close",
+  "gui.biometech.pages": "%s/%s",
+  "gui.biometech.fuel": "Fuel",
+  "gui.biometech.fuel.brackets": "[%s]",
+  "gui.biometech.button.activate": "Activate",
+  "gui.biometech.button.deactivate": "Deactivate",
+  "gui.biometech.no_biome": "No Biome Selected!",
+  "gui.biometech.radius": "Radius: %s",
+  "gui.biometech.button.clear_biome": "Click to clear biome!",
+  "gamerule.biometech:fuel_per_change": "Fuel used for single biome change",
+  "gamerule.biometech:uses_per_essence": "Uses of single Biome Essence",
+  "gamerule.biometech:delay_between_changes": "Delay (in ticks) between biome changes",
+  "gamerule.biometech:max_checks_per_tick": "Maximum number of biome checks per tick",
+  "gamerule.biometech:max_radius": "Maximum radius of Biome Converter",
+  "gamerule.biometech:wandering_traders_sell_essence": "Wandering Traders sell Biome Essence"
+}
