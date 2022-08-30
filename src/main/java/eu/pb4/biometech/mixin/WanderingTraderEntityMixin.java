@@ -19,7 +19,7 @@ public abstract class WanderingTraderEntityMixin extends MerchantEntity {
 
     @Inject(method = "fillRecipes", at = @At("TAIL"))
     private void biometech$addTrades(CallbackInfo ci) {
-        if (this.world.getGameRules().getBoolean(BGameRules.WANDERING_TRADERS_OFFERS)) {
+        if (this.getOffers() != null && this.world != null && !this.world.isClient && this.world.getGameRules().getBoolean(BGameRules.WANDERING_TRADERS_OFFERS)) {
             if (this.random.nextDouble() < 0.9) {
 
                 var x = BTradeOffers.BIOME_ESSENCE_TRADER.create(this, this.random);

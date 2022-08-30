@@ -1,6 +1,8 @@
 package eu.pb4.biometech.util;
 
 import com.mojang.authlib.GameProfile;
+import eu.pb4.biometech.item.BItems;
+import eu.pb4.biometech.item.BiomeEssenceItem;
 import eu.pb4.biometech.mixin.BiomeAccessAccessor;
 import eu.pb4.common.protection.api.CommonProtection;
 import eu.pb4.polymer.api.networking.PolymerPacketUtils;
@@ -14,6 +16,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -44,7 +47,7 @@ public class ModUtil {
     public static final Identifier PACKET = id("version");
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    private static final Map<RegistryKey<Biome>, Item> BIOME_ICONS = new Object2ObjectOpenHashMap<>();
+    private static final Map<RegistryKey<Biome>, ItemStack> BIOME_ICONS = new Object2ObjectOpenHashMap<>();
 
     private static final Object2IntMap<RegistryKey<Biome>> BIOME_COLORS = new Object2IntOpenHashMap<>();
 
@@ -136,10 +139,11 @@ public class ModUtil {
         return false;
     }
 
-    public static Item getBiomeIcon(RegistryKey<Biome> key) {
-        var value = BIOME_ICONS.get(key);
+    public static ItemStack getBiomeIcon(RegistryKey<Biome> key) {
+        var out = BIOME_ICONS.get(key);
 
-        if (value == null) {
+        if (out == null) {
+            Item value;
             var path = key.getValue().getPath();
 
             if (path.contains("dark_forest")) {
@@ -150,14 +154,14 @@ public class ModUtil {
                 value = Items.CRIMSON_FUNGUS;
             } else if (path.contains("warped")) {
                 value = Items.WARPED_FUNGUS;
-            } else if (path.contains("spruce") || path.contains("taiga") || path.contains("grove")) {
-                value = Items.SPRUCE_SAPLING;
             } else if (path.contains("flower")) {
                 value = Items.RED_TULIP;
             } else if (path.contains("savanna")) {
                 value = Items.ACACIA_SAPLING;
             } else if (path.contains("mangrove")) {
                 value = Items.MANGROVE_PROPAGULE;
+            } else if (path.contains("spruce") || path.contains("taiga") || path.contains("grove")) {
+                value = Items.SPRUCE_SAPLING;
             } else if (path.contains("lush_cave")) {
                 value = Items.GLOW_BERRIES;
             } else if (path.contains("coral")) {
@@ -207,13 +211,19 @@ public class ModUtil {
             } else if (path.contains("end")) {
                 value = Items.END_STONE;
             } else {
-                value = Items.BEDROCK;
+                value = null;
             }
 
-            BIOME_ICONS.put(key, value);
+            if (value != null) {
+                out = value.getDefaultStack();
+            } else {
+                out = new ItemStack(BItems.BIOME_ESSENCE);
+                out.getOrCreateNbt().putString("Biome", key.getValue().toString());
+            }
+            BIOME_ICONS.put(key, out);
         }
 
-        return value;
+        return out;
     }
 
     public static void updateChunk(WorldChunk chunk) {
@@ -241,7 +251,7 @@ public class ModUtil {
             } else if (biome.isIn(ConventionalBiomeTags.DESERT)) {
                 color = 0xe3dbb0;
             } else if (biome.isIn(BiomeTags.IS_MOUNTAIN) || biome.isIn(ConventionalBiomeTags.ICY)) {
-                if (getBiomeIcon(biome.getKey().get()) instanceof BlockItem blockItem && blockItem.getBlock().getDefaultMapColor() != MapColor.CLEAR) {
+                if (getBiomeIcon(biome.getKey().get()).getItem() instanceof BlockItem blockItem && blockItem.getBlock().getDefaultMapColor() != MapColor.CLEAR) {
                     color = blockItem.getBlock().getDefaultMapColor().getRenderColor(MapColor.Brightness.HIGH);
                     color = ColorHelper.Argb.getArgb(0,
                             ColorHelper.Argb.getBlue(color),

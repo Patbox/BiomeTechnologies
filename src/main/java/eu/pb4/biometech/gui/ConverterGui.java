@@ -225,7 +225,7 @@ public class ConverterGui extends LayeredGui {
             }
 
             {
-                var b = new GuiElementBuilder(be.currentBiomeId != null ? ModUtil.getBiomeIcon(be.currentBiomeId) : Items.BARRIER)
+                var b = (be.currentBiomeId != null ? GuiElementBuilder.from(ModUtil.getBiomeIcon(be.currentBiomeId)) : new GuiElementBuilder(Items.BARRIER))
                         .setName(be.currentBiomeId != null
                                 ? Text.translatable(Util.createTranslationKey("biome", be.currentBiomeId.getValue()))
                                 : TextUtil.gui("no_biome").formatted(Formatting.RED)

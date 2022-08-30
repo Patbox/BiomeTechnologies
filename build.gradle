@@ -1,12 +1,14 @@
 plugins {
 	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
+	id "com.modrinth.minotaur" version "2.+"
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
+archivesBaseName = project.archives_base_name + "+" + project.minecraft_version
 version = project.mod_version
 group = project.maven_group
 
@@ -41,6 +43,8 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 	maven { url 'https://maven.nucleoid.xyz' }
+
+	mavenLocal()
 }
 
 dependencies {
@@ -52,12 +56,12 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include('fr.catcore:server-translations-api:1.4.16+1.19')
-	modImplementation include('eu.pb4:polymer:0.2.14+1.19.2')
+	modImplementation include('fr.catcore:server-translations-api:1.4.17+1.19.2')
+	modImplementation include('eu.pb4:polymer:0.2.15+1.19.2')
 	modImplementation include('eu.pb4:common-protection-api:1.0.0')
 	modImplementation 'eu.pb4:polymer-autohost:0.1.2+1.19.1'
 	modImplementation include("eu.pb4:hologram-api:0.2.2+1.19")
-	modImplementation include("eu.pb4:sgui:1.1.4+1.19.1")
+	modImplementation include("eu.pb4:sgui:1.1.5+1.19.1")
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
@@ -94,6 +98,53 @@ jar {
 		into("assets/biometech/lang")
 	}
 }
+
+
+curseforge {
+	if (System.getenv("CURSEFORGE")) {
+		apiKey = System.getenv("CURSEFORGE")
+
+		project {
+			id = "662789"
+			releaseType = "release"
+			changelog = System.getenv("CHANGELOG")
+			changelogType = "markdown"
+			addGameVersion ((String) project.minecraft_version)
+			addGameVersion "Fabric"
+			addGameVersion "Quilt"
+			mainArtifact(remapJar)
+
+			afterEvaluate {
+				uploadTask.dependsOn("remapJar")
+			}
+		}
+	}
+
+	options {
+		forgeGradleIntegration = false
+	}
+	remapJar {
+		finalizedBy project.tasks.curseforge
+	}
+}
+
+if (System.getenv("MODRINTH")) {
+	modrinth {
+		token = System.getenv("MODRINTH")
+		projectId = 'XhDzIuvV'// The ID of your modrinth project, slugs will not work.
+		versionNumber = "" + version // The version of the mod to upload.
+		versionType = "release"
+		uploadFile = remapJar // This links to a task that builds your mod jar and sets "uploadFile" to the mod jar.
+		gameVersions = [((String) project.minecraft_version)]
+		changelog = System.getenv("CHANGELOG")
+		loaders = ["fabric", "quilt"]
+	}
+
+	remapJar {
+		finalizedBy project.tasks.modrinth
+	}
+}
+
 
 // configure the maven publication
 publishing {

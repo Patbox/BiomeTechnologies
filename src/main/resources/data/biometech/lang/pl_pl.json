@@ -1,0 +1,19 @@
+{
+  "block.biometech.biome_converter": "Konwerter Biomów",
+  "item.biometech.biome_essence": "Esencja Biomu (%s)",
+  "gui.biometech.close": "Zamknij",
+  "gui.biometech.pages": "%s/%s",
+  "gui.biometech.fuel": "Paliwo",
+  "gui.biometech.fuel.brackets": "[%s]",
+  "gui.biometech.button.activate": "Włącz",
+  "gui.biometech.button.deactivate": "Wyłącz",
+  "gui.biometech.no_biome": "Brak wybranego biomu!",
+  "gui.biometech.radius": "Promień: %s",
+  "gui.biometech.button.clear_biome": "Kliknij aby wyczyścić biom!",
+  "gamerule.biometech:fuel_per_change": "Paliwo użyte na pojedyńczą zmianę biomu",
+  "gamerule.biometech:uses_per_essence": "Użycia pojedyńczej Esencji Biomu",
+  "gamerule.biometech:delay_between_changes": "Odstęp (w tickach) pomiędzy zmianami biomu",
+  "gamerule.biometech:max_checks_per_tick": "Maksymalna ilość prób zmiany biomu na tick",
+  "gamerule.biometech:max_radius": "Maksymalny promień działania konwertera",
+  "gamerule.biometech:wandering_traders_sell_essence": "Wędrujący handlarze sprzedają esencję"
+}
