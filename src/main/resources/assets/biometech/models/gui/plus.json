@@ -1,13 +1,6 @@
   {
-  "parent": "minecraft:item/handheld",
+    "parent": "biometech:gui/button",
   "textures": {
     "layer0": "biometech:gui/plus"
-  },
-  "display": {
-    "gui": {
-        "rotation": [ 0, 0, 0 ],
-        "translation": [ 0, 0, 0 ],
-        "scale": [ 1.12, 1.12, 1.12 ]
-    }
   }
 }

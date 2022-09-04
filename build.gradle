@@ -8,8 +8,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name + "+" + project.minecraft_version
-version = project.mod_version
+archivesBaseName = project.archives_base_name
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 loom {
@@ -57,7 +57,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation include('fr.catcore:server-translations-api:1.4.17+1.19.2')
-	modImplementation include('eu.pb4:polymer:0.2.15+1.19.2')
+	modImplementation include('eu.pb4:polymer:0.2.16+1.19.2')
 	modImplementation include('eu.pb4:common-protection-api:1.0.0')
 	modImplementation 'eu.pb4:polymer-autohost:0.1.2+1.19.1'
 	modImplementation include("eu.pb4:hologram-api:0.2.2+1.19")

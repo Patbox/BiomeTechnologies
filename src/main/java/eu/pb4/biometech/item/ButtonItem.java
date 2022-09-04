@@ -60,7 +60,7 @@ public class ButtonItem extends Item implements PolymerItem, PolymerClientDecode
                         "gui": {
                             "rotation": [ 0, 0, 0 ],
                             "translation": [ 0, 0, 0 ],
-                            "scale": [ 1.12, 1.12, 1.12 ]
+                            "scale": [ 2.0, 2.0, 2.0 ]
                         }
                       }
                     }
