@@ -22,20 +22,22 @@ public class BTradeOffers {
         @Nullable
         @Override
         public TradeOffer create(Entity entity, Random random) {
-            var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
+            if (entity.getServer() != null) {
+                var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
 
-            var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
-                    .collect(Collectors.toList());
-            var biome = biomes.get(random.nextInt(biomes.size()));
+                var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
+                        .collect(Collectors.toList());
+                var biome = biomes.get(random.nextInt(biomes.size()));
 
-            if (biome != null) {
-                var stack = new ItemStack(BItems.BIOME_ESSENCE, random.nextBetween(2, 6));
-                stack.getOrCreateNbt().putString("Biome", biome.getKey().get().getValue().toString());
+                if (biome != null) {
+                    var stack = new ItemStack(BItems.BIOME_ESSENCE, random.nextBetween(2, 6));
+                    stack.getOrCreateNbt().putString("Biome", biome.getKey().get().getValue().toString());
 
 
-                return new TradeOffer(new ItemStack(Items.EMERALD, random.nextBetween(4, 12)), stack, random.nextBetween(8, 13), 0, 0);
+                    return new TradeOffer(new ItemStack(Items.EMERALD, random.nextBetween(4, 12)), stack, random.nextBetween(8, 13), 0, 0);
+                }
+
             }
-
             return null;
         }
     };
@@ -44,18 +46,21 @@ public class BTradeOffers {
         @Nullable
         @Override
         public TradeOffer create(Entity entity, Random random) {
-            var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
+            if (entity.getServer() != null) {
 
-            var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
-                    .collect(Collectors.toList());
-            var biome = biomes.get(random.nextInt(biomes.size()));
+                var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
 
-            if (biome != null) {
-                var stack = new ItemStack(BItems.BIOME_ESSENCE, random.nextBetween(3, 8));
-                stack.getOrCreateNbt().putString("Biome", biome.getKey().get().getValue().toString());
+                var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
+                        .collect(Collectors.toList());
+                var biome = biomes.get(random.nextInt(biomes.size()));
+
+                if (biome != null) {
+                    var stack = new ItemStack(BItems.BIOME_ESSENCE, random.nextBetween(3, 8));
+                    stack.getOrCreateNbt().putString("Biome", biome.getKey().get().getValue().toString());
 
 
-                return new TradeOffer(new ItemStack(Items.EMERALD, random.nextBetween(8, 16)), stack, random.nextBetween(3, 8), 0, 0);
+                    return new TradeOffer(new ItemStack(Items.EMERALD, random.nextBetween(8, 16)), stack, random.nextBetween(3, 8), 0, 0);
+                }
             }
 
             return null;

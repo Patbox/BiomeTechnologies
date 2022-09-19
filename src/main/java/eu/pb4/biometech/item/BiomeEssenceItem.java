@@ -7,6 +7,7 @@ import eu.pb4.biometech.util.ModUtil;
 import eu.pb4.polymer.api.client.PolymerClientDecoded;
 import eu.pb4.polymer.api.client.PolymerKeepModel;
 import eu.pb4.polymer.api.item.PolymerItem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -37,11 +38,18 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
     }
 
     @Nullable
-    public static RegistryEntry<Biome> getBiome(MinecraftServer server, ItemStack itemStack) {
+    public static RegistryEntry<Biome> getBiome(@Nullable MinecraftServer server, ItemStack itemStack) {
         var id = getBiomeKey(itemStack);
         if (id != null) {
-            var biome = server.getRegistryManager().get(Registry.BIOME_KEY).getEntry(id);
-            return biome.orElse(null);
+            if (server != null) {
+                var biome = server.getRegistryManager().get(Registry.BIOME_KEY).getEntry(id);
+                return biome.orElse(null);
+            } else if (ModUtil.IS_CLIENT) {
+                if (MinecraftClient.getInstance().world != null) {
+                    var biome = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).getEntry(id);
+                    return biome.orElse(null);
+                }
+            }
         }
         return null;
     }
@@ -67,9 +75,9 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
     public ItemStack getPolymerItemStack(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
         var out = PolymerItem.super.getPolymerItemStack(itemStack, player);
 
-        if (player != null && itemStack.hasNbt()) {
+        if (itemStack.hasNbt()) {
 
-            var type = getBiome(player.server, itemStack);
+            var type = getBiome(player != null ? player.server : null, itemStack);
 
             if (type != null) {
                 out.getOrCreateNbt().putInt("CustomPotionColor", ModUtil.getBiomeColor(type));

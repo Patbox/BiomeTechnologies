@@ -11,7 +11,9 @@ import eu.pb4.polymer.impl.PolymerImplUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.item.BlockItem;
@@ -46,6 +48,8 @@ public class ModUtil {
     public static final String MOD_ID = "biometech";
     public static final Identifier PACKET = id("version");
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    public static final boolean IS_CLIENT = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
 
     private static final Map<RegistryKey<Biome>, ItemStack> BIOME_ICONS = new Object2ObjectOpenHashMap<>();
 
