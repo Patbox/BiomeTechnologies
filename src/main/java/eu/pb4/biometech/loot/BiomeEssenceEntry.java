@@ -11,9 +11,9 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntryType;
 import net.minecraft.loot.function.LootFunction;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public class BiomeEssenceEntry extends LeafEntry {
 
     @Override
     protected void generateLoot(Consumer<ItemStack> lootConsumer, LootContext context) {
-        var stream = context.getWorld().getRegistryManager().get(Registry.BIOME_KEY).streamEntries();
+        var stream = context.getWorld().getRegistryManager().get(RegistryKeys.BIOME).streamEntries();
 
         if (this.tagSource != null) {
             stream = stream.filter(x -> x.isIn(this.tagSource));
@@ -72,7 +72,7 @@ public class BiomeEssenceEntry extends LeafEntry {
                 var id = Identifier.tryParse(entryJson.get("SourceTag").getAsString());
 
                 if (id != null) {
-                    source = TagKey.of(Registry.BIOME_KEY, id);
+                    source = TagKey.of(RegistryKeys.BIOME, id);
                 }
             }
 

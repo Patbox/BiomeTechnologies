@@ -1,8 +1,9 @@
 package eu.pb4.biometech.item;
 
 import eu.pb4.biometech.block.model.HeadModels;
-import eu.pb4.polymer.api.item.PolymerItem;
+import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.block.Block;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ public class BiomeConverterBlockItem extends BlockItem implements PolymerItem {
     }
 
     @Override
-    public ItemStack getPolymerItemStack(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return HeadModels.set(PolymerItem.super.getPolymerItemStack(itemStack, player), HeadModels.BASE);
+    public ItemStack getPolymerItemStack(ItemStack itemStack, TooltipContext context, @Nullable ServerPlayerEntity player) {
+        return HeadModels.set(PolymerItem.super.getPolymerItemStack(itemStack, context, player), HeadModels.BASE);
     }
 }

@@ -5,9 +5,9 @@ import eu.pb4.biometech.item.BItems;
 import eu.pb4.biometech.item.BiomeEssenceItem;
 import eu.pb4.biometech.mixin.BiomeAccessAccessor;
 import eu.pb4.common.protection.api.CommonProtection;
-import eu.pb4.polymer.api.networking.PolymerPacketUtils;
-import eu.pb4.polymer.api.resourcepack.PolymerRPUtils;
-import eu.pb4.polymer.impl.PolymerImplUtils;
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
+import eu.pb4.polymer.networking.api.PolymerServerNetworking;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -21,17 +21,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BiomeTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.chunk.PalettedContainer;
@@ -68,11 +66,11 @@ public class ModUtil {
     }
 
     public static boolean useResourcePack(ServerPlayerEntity player) {
-        return PolymerRPUtils.hasPack(player) || hasMod(player);
+        return PolymerResourcePackUtils.hasPack(player) || hasMod(player);
     }
 
     public static boolean hasMod(ServerPlayerEntity player) {
-        return player != null && PolymerPacketUtils.getSupportedVersion(player.networkHandler, PACKET) != -1;
+        return player != null && PolymerServerNetworking.getSupportedVersion(player.networkHandler, PACKET) != -1;
     }
 
     public static boolean setBiome(ServerWorld world, int x, int y, int z, RegistryEntry<Biome> biome, @Nullable GameProfile profile, Consumer<WorldChunk> dirtyChunkConsumer) {
@@ -231,13 +229,7 @@ public class ModUtil {
     }
 
     public static void updateChunk(WorldChunk chunk) {
-        var world = ((ServerWorld) chunk.getWorld());
-        for (var player : world.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(chunk.getPos())) {
-            PolymerImplUtils.setPlayer(player);
-            player.networkHandler.sendPacket(new ChunkDataS2CPacket(chunk, world.getLightingProvider(), null, null, true));
-
-        }
-        PolymerImplUtils.setPlayer(null);
+        ((ServerWorld) chunk.getWorld()).getChunkManager().threadedAnvilChunkStorage.sendChunkPacketToWatchingPlayers(chunk);
     }
 
     public static int getBiomeColor(RegistryEntry<Biome> biome) {

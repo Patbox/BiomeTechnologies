@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import eu.pb4.biometech.item.BItems;
 import eu.pb4.biometech.item.BiomeEssenceItem;
 import eu.pb4.biometech.util.BGameRules;
+import eu.pb4.biometech.util.BiomeConverterLike;
 import eu.pb4.biometech.util.ModUtil;
 import eu.pb4.biometech.block.BiomeConverterBlock;
 import eu.pb4.biometech.block.model.ArmorStandHologramElement;
@@ -18,6 +19,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -26,22 +28,24 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedirectedInventory {
+public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedirectedInventory, BiomeConverterLike {
     private final Set<WorldChunk> dirtChunks = new HashSet<>();
     public int radius = 20;
     public int energy = 0;
@@ -95,7 +99,7 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
     public void readNbt(NbtCompound nbt) {
         var id = Identifier.tryParse(nbt.getString("BiomeId"));
         if (id != null) {
-            this.setBiome(RegistryKey.of(Registry.BIOME_KEY, id));
+            this.setBiome(RegistryKey.of(RegistryKeys.BIOME, id));
         }
 
         this.radius = nbt.getInt("Radius");
@@ -143,7 +147,7 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
         }
 
         if (this.currentBiome == null) {
-            var biome = this.world.getRegistryManager().get(Registry.BIOME_KEY).getEntry(this.currentBiomeId);
+            var biome = this.world.getRegistryManager().get(RegistryKeys.BIOME).getEntry(this.currentBiomeId);
             if (biome.isPresent()) {
                 this.currentBiome = biome.get();
             } else {
@@ -169,7 +173,7 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
 
             var base = ModUtil.getBiomeColor(this.currentBiome);
 
-            var color = new Vec3f((float) ((ColorHelper.Argb.getRed(base) / 256f) * this.yDelta), (float) ((ColorHelper.Argb.getGreen(base) / 256f) * this.yDelta), (float) ((ColorHelper.Argb.getBlue(base) / 256f) * this.yDelta));
+            var color = new Vector3f((float) ((ColorHelper.Argb.getRed(base) / 256f) * this.yDelta), (float) ((ColorHelper.Argb.getGreen(base) / 256f) * this.yDelta), (float) ((ColorHelper.Argb.getBlue(base) / 256f) * this.yDelta));
             //var color = new Vec3f(ColorHelper.Argb.getRed(base) / 255f, ColorHelper.Argb.getGreen(base) / 255f, ColorHelper.Argb.getBlue(base) / 255f);
             var particle2 = new DustParticleEffect(color, (float) (this.yDelta * 1.5));
             sendParticle(world, true, particle2, this.pos.getX() + 0.5, this.pos.getY() + 0.75 + yPos, this.pos.getZ() + 0.5, 0, (float) (Math.random() * 0.01), 10, (float) (Math.random() * 0.01), 1);
@@ -501,8 +505,47 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
         new ConverterGui(serverPlayer, this);
     }
 
+    @Override
+    public Text getConvName() {
+        return this.getCachedState().getBlock().getName();
+    }
+
+    @Override
+    public void radius(int i) {
+        this.radius = i;
+    }
+
+    public boolean shouldClose(ServerPlayerEntity player) {
+        return this.isRemoved() || this.getPos().getSquaredDistanceFromCenter(player.getX(), player.getY(), player.getZ()) > 256;
+    }
+
+    @Override
+    public Inventory fuelInventory() {
+        return this.fuelInventory;
+    }
+
+    @Override
+    public Inventory essenceInventory() {
+        return this.essenceInventory;
+    }
+
     public boolean isActivated() {
         return this.isActive;
+    }
+
+    @Override
+    public int radius() {
+        return this.radius;
+    }
+
+    @Override
+    public RegistryKey<Biome> currentBiomeId() {
+        return this.currentBiomeId;
+    }
+
+    @Override
+    public int energy() {
+        return this.energy;
     }
 
     @Override

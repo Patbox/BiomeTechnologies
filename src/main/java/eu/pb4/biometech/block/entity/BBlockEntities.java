@@ -1,11 +1,12 @@
 package eu.pb4.biometech.block.entity;
 
 import eu.pb4.biometech.block.BBlocks;
-import eu.pb4.polymer.api.block.PolymerBlockUtils;
+import eu.pb4.polymer.core.api.block.PolymerBlockUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 
 import static eu.pb4.biometech.util.ModUtil.id;
 
@@ -19,7 +20,7 @@ public class BBlockEntities {
 
 
     private static <T extends BlockEntity> BlockEntityType<T> register(String path, BlockEntityType<T> block) {
-        Registry.register(Registry.BLOCK_ENTITY_TYPE, id(path), block);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, id(path), block);
         PolymerBlockUtils.registerBlockEntity(block);
         return block;
     }

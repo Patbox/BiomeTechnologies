@@ -4,15 +4,17 @@ import eu.pb4.biometech.entity.BEntities;
 import eu.pb4.biometech.entity.ThrownBiomeEssenceEntity;
 import eu.pb4.biometech.util.BBiomeTags;
 import eu.pb4.biometech.util.ModUtil;
-import eu.pb4.polymer.api.client.PolymerClientDecoded;
-import eu.pb4.polymer.api.client.PolymerKeepModel;
-import eu.pb4.polymer.api.item.PolymerItem;
+import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -22,9 +24,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
@@ -42,11 +41,11 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
         var id = getBiomeKey(itemStack);
         if (id != null) {
             if (server != null) {
-                var biome = server.getRegistryManager().get(Registry.BIOME_KEY).getEntry(id);
+                var biome = server.getRegistryManager().get(RegistryKeys.BIOME).getEntry(id);
                 return biome.orElse(null);
             } else if (ModUtil.IS_CLIENT) {
                 if (MinecraftClient.getInstance().world != null) {
-                    var biome = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).getEntry(id);
+                    var biome = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.BIOME).getEntry(id);
                     return biome.orElse(null);
                 }
             }
@@ -63,7 +62,7 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
     public static RegistryKey<Biome> getBiomeKey(ItemStack stack) {
         var id = getBiomeId(stack);
 
-        return id != null ? RegistryKey.of(Registry.BIOME_KEY, id) : null;
+        return id != null ? RegistryKey.of(RegistryKeys.BIOME, id) : null;
     }
 
     @Override
@@ -72,8 +71,8 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
     }
 
     @Override
-    public ItemStack getPolymerItemStack(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        var out = PolymerItem.super.getPolymerItemStack(itemStack, player);
+    public ItemStack getPolymerItemStack(ItemStack itemStack, TooltipContext context, @Nullable ServerPlayerEntity player) {
+        var out = PolymerItem.super.getPolymerItemStack(itemStack, context, player);
 
         if (itemStack.hasNbt()) {
 
@@ -114,20 +113,5 @@ public class BiomeEssenceItem extends Item implements PolymerItem {
         }
 
         return TypedActionResult.success(itemStack, world.isClient());
-    }
-
-    public void appendStacks(ItemGroup group, DefaultedList<ItemStack> stacks) {
-        if (this.isIn(group) && ModUtil.server != null) {
-            var reg = ModUtil.server.getRegistryManager().get(Registry.BIOME_KEY);
-            var keys = new ArrayList<>(reg.getKeys());
-            keys.sort(Comparator.comparing(RegistryKey::getValue));
-            for (var biome : keys) {
-                if (!reg.getEntry(biome).get().isIn(BBiomeTags.BANNED_BIOMES)) {
-                    var stack = new ItemStack(this);
-                    stack.getOrCreateNbt().putString("Biome", biome.getValue().toString());
-                    stacks.add(stack);
-                }
-            }
-        }
     }
 }

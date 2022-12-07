@@ -3,7 +3,7 @@ package eu.pb4.biometech.block.model;
 import com.mojang.datafixers.util.Pair;
 import eu.pb4.holograms.api.elements.AbstractHologramElement;
 import eu.pb4.holograms.api.holograms.AbstractHologram;
-import eu.pb4.polymer.api.utils.PolymerUtils;
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -31,7 +31,10 @@ public class ArmorStandHologramElement extends AbstractHologramElement {
         this.entity.setPosition(hologram.getElementPosition(this).add(this.offset));
 
         player.networkHandler.sendPacket(this.entity.createSpawnPacket());
-        player.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(this.entity.getId(), this.entity.getDataTracker(), true));
+        var l =  this.entity.getDataTracker().getChangedEntries();
+        if (l != null) {
+            player.networkHandler.sendPacket(new EntityTrackerUpdateS2CPacket(this.entity.getId(), l));
+        }
         player.networkHandler.sendPacket(createEqUpdate());
     }
 
@@ -49,13 +52,16 @@ public class ArmorStandHologramElement extends AbstractHologramElement {
             this.entity.updatePositionAndAngles(vec.x, vec.y, vec.z, this.entity.getYaw(), 0);
 
             var packet = createEqUpdate();
-            var packet2 = new EntityTrackerUpdateS2CPacket(this.entity.getId(), this.entity.getDataTracker(), false);
+            var list = this.entity.getDataTracker().getDirtyEntries();
+            var packet2 = list != null ? new EntityTrackerUpdateS2CPacket(this.entity.getId(), list) : null;
             var packet3 = new EntityPositionS2CPacket(this.entity);
 
 
             for (ServerPlayerEntity player : hologram.getPlayerSet()) {
                 player.networkHandler.sendPacket(packet);
-                player.networkHandler.sendPacket(packet2);
+                if (packet2 != null) {
+                    player.networkHandler.sendPacket(packet2);
+                }
                 player.networkHandler.sendPacket(packet3);
 
             }

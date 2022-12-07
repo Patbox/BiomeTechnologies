@@ -1,14 +1,15 @@
 package eu.pb4.biometech.item;
 
 import eu.pb4.biometech.util.ModUtil;
-import eu.pb4.polymer.api.client.PolymerClientDecoded;
-import eu.pb4.polymer.api.client.PolymerKeepModel;
-import eu.pb4.polymer.api.item.PolymerItem;
-import eu.pb4.polymer.api.resourcepack.PolymerModelData;
-import eu.pb4.polymer.api.resourcepack.PolymerRPBuilder;
-import eu.pb4.polymer.api.resourcepack.PolymerRPUtils;
+import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
+import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
+import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -35,7 +36,7 @@ public class ButtonItem extends Item implements PolymerItem, PolymerClientDecode
     }
 
     public static void register(String texture, int i) {
-        var model = PolymerRPUtils.requestModel(Items.BAMBOO, id("gui/" + texture));
+        var model = PolymerResourcePackUtils.requestModel(Items.BAMBOO, id("gui/" + texture));
         TEXTURE_MAP.put(texture, model);
         while (TEXTURE_LIST.size() <= i) {
             TEXTURE_LIST.add(null);
@@ -44,11 +45,11 @@ public class ButtonItem extends Item implements PolymerItem, PolymerClientDecode
         TEXTURE_ID.put(texture, i);
         /*if (shouldRegister) {
             shouldRegister = false;
-            PolymerRPUtils.RESOURCE_PACK_CREATION_EVENT.register(ButtonItem::createModels);
+            PolymerResourcePackUtils.RESOURCE_PACK_CREATION_EVENT.register(ButtonItem::createModels);
         }*/
     }
 
-    private static void createModels(PolymerRPBuilder polymerRPBuilder) {
+    private static void createModels(ResourcePackBuilder polymerRPBuilder) {
         for (var value : TEXTURE_MAP.values()) {
             var json = """
                       {
@@ -83,11 +84,11 @@ public class ButtonItem extends Item implements PolymerItem, PolymerClientDecode
     }
 
     @Override
-    public ItemStack getPolymerItemStack(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+    public ItemStack getPolymerItemStack(ItemStack itemStack, TooltipContext context, @Nullable ServerPlayerEntity player) {
         if (ModUtil.hasMod(player)) {
             return itemStack;
         } else {
-            return PolymerItem.super.getPolymerItemStack(itemStack, player);
+            return PolymerItem.super.getPolymerItemStack(itemStack, context, player);
         }
     }
 

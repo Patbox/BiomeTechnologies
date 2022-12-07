@@ -56,12 +56,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include('fr.catcore:server-translations-api:1.4.17+1.19.2')
-	modImplementation include('eu.pb4:polymer:0.2.16+1.19.2')
+	modImplementation include('fr.catcore:server-translations-api:1.4.18+1.19.2')
+	modImplementation include('eu.pb4:polymer-core:0.3.0-rc.3+1.19.3')
+	modImplementation include('eu.pb4:polymer-resource-pack:0.3.0-rc.3+1.19.3')
 	modImplementation include('eu.pb4:common-protection-api:1.0.0')
-	modImplementation 'eu.pb4:polymer-autohost:0.1.2+1.19.1'
-	modImplementation include("eu.pb4:hologram-api:0.2.2+1.19")
-	modImplementation include("eu.pb4:sgui:1.1.5+1.19.1")
+	modImplementation 'eu.pb4:polymer-autohost:0.3.0-rc.3+1.19.3'
+	modImplementation include("eu.pb4:hologram-api:0.2.3+1.19.3")
+	modImplementation include("eu.pb4:sgui:1.2.0+1.19.3")
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.

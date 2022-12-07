@@ -9,9 +9,9 @@ import eu.pb4.biometech.item.BItems;
 import eu.pb4.biometech.loot.BLootTables;
 import eu.pb4.biometech.util.BGameRules;
 import eu.pb4.biometech.util.ModUtil;
-import eu.pb4.polymer.api.networking.PolymerPacketUtils;
-import eu.pb4.polymer.api.resourcepack.PolymerRPUtils;
-import eu.pb4.polymer.api.utils.PolymerUtils;
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
+import eu.pb4.polymer.networking.api.PolymerServerNetworking;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -20,6 +20,7 @@ import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.color.world.GrassColors;
 
 import javax.imageio.ImageIO;
+import java.util.zip.ZipFile;
 
 public class ModInit implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -28,7 +29,7 @@ public class ModInit implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		PolymerRPUtils.addAssetSource(ModUtil.MOD_ID);
+		PolymerResourcePackUtils.addModAssets(ModUtil.MOD_ID);
 		BGameRules.register();
 		BBlocks.register();
 		BItems.register();
@@ -40,7 +41,7 @@ public class ModInit implements ModInitializer {
 
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			try {
-				var jar = PolymerUtils.getClientJar();
+				var jar = new ZipFile(PolymerUtils.getClientJar().toFile());
 				var image = ImageIO.read(jar.getInputStream(jar.getEntry("assets/minecraft/textures/colormap/foliage.png")));
 				var image2 = ImageIO.read(jar.getInputStream(jar.getEntry("assets/minecraft/textures/colormap/grass.png")));
 				jar.close();
@@ -69,7 +70,7 @@ public class ModInit implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTING.register((x) -> ModUtil.server = x);
 		ServerLifecycleEvents.SERVER_STOPPED.register((x) -> ModUtil.server = null);
 
-		PolymerPacketUtils.registerServerPacket(ModUtil.PACKET, 0);
+		PolymerServerNetworking.registerSendPacket(ModUtil.PACKET, 0);
 	}
 
 }

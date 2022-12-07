@@ -1,6 +1,6 @@
   {
     "parent": "biometech:gui/button",
   "textures": {
-    "layer0": "biometech:gui/activate_off"
+    "layer0": "biometech:item/gui/activate_off"
   }
 }

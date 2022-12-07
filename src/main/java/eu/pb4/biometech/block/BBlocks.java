@@ -4,13 +4,12 @@ import eu.pb4.biometech.data.BDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.entity.EntityType;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
 
 import java.util.function.Function;
 
@@ -27,15 +26,16 @@ public class BBlocks {
     public static void register() {
 
     }
+
     private static <T extends Block> T register(String path, T block) {
-        return Registry.register(Registry.BLOCK, id(path), block);
+        return Registry.register(Registries.BLOCK, id(path), block);
     }
 
     public static void createDrops(BDataGenerator.BlockLootTableProvider provider) {
         provider.addDrop(BIOME_CONVERTER);
     }
 
-    public static void createTags(Function<TagKey<Block>, FabricTagProvider<Block>.FabricTagBuilder<Block>> provider) {
+    public static void createTags(Function<TagKey<Block>, FabricTagProvider<Block>.FabricTagBuilder> provider) {
         provider.apply(BlockTags.PICKAXE_MINEABLE).add(BIOME_CONVERTER);
     }
 }

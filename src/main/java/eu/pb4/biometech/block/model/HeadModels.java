@@ -1,6 +1,6 @@
 package eu.pb4.biometech.block.model;
 
-import eu.pb4.polymer.api.utils.PolymerUtils;
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 

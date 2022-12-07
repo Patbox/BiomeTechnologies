@@ -6,8 +6,9 @@ import eu.pb4.sgui.api.gui.MerchantGui;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
@@ -23,7 +24,7 @@ public class BTradeOffers {
         @Override
         public TradeOffer create(Entity entity, Random random) {
             if (entity.getServer() != null) {
-                var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
+                var reg = entity.getServer().getRegistryManager().get(RegistryKeys.BIOME);
 
                 var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
                         .collect(Collectors.toList());
@@ -48,7 +49,7 @@ public class BTradeOffers {
         public TradeOffer create(Entity entity, Random random) {
             if (entity.getServer() != null) {
 
-                var reg = entity.getServer().getRegistryManager().get(Registry.BIOME_KEY);
+                var reg = entity.getServer().getRegistryManager().get(RegistryKeys.BIOME);
 
                 var biomes = reg.streamEntries().filter(x -> !x.isIn(BBiomeTags.BANNED_BIOMES) && !x.isIn(BBiomeTags.TRADER_BANNED_BIOMES))
                         .collect(Collectors.toList());

@@ -2,7 +2,7 @@ package eu.pb4.biometech.block;
 
 import eu.pb4.biometech.block.entity.BBlockEntities;
 import eu.pb4.biometech.block.entity.BiomeConverterBlockEntity;
-import eu.pb4.polymer.api.block.PolymerBlock;
+import eu.pb4.polymer.core.api.block.PolymerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;

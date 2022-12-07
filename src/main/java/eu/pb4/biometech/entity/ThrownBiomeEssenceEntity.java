@@ -3,11 +3,12 @@ package eu.pb4.biometech.entity;
 import eu.pb4.biometech.item.BItems;
 import eu.pb4.biometech.item.BiomeEssenceItem;
 import eu.pb4.biometech.util.ModUtil;
-import eu.pb4.polymer.api.entity.PolymerEntity;
+import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -48,7 +49,7 @@ public class ThrownBiomeEssenceEntity extends ThrownItemEntity implements Polyme
     }
 
     @Override
-    public EntityType<?> getPolymerEntityType() {
+    public EntityType<?> getPolymerEntityType(ServerPlayerEntity player) {
         return EntityType.POTION;
     }
 }

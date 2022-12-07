@@ -1,6 +1,6 @@
   {
     "parent": "biometech:gui/button",
   "textures": {
-    "layer0": "biometech:gui/minus"
+    "layer0": "biometech:item/gui/minus"
   }
 }
