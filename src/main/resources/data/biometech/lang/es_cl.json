@@ -1,0 +1,19 @@
+{
+  "block.biometech.biome_converter": "Convertidor de Bioma",
+  "item.biometech.biome_essence": "Esencia de bioma (%s)",
+  "gui.biometech.close": "Cerrar",
+  "gui.biometech.pages": "%s/%s",
+  "gui.biometech.fuel": "Combustible",
+  "gui.biometech.fuel.brackets": "[%s]",
+  "gui.biometech.button.activate": "Activar",
+  "gui.biometech.button.deactivate": "Desactivar",
+  "gui.biometech.no_biome": "Ningún Bioma Seleccionado!",
+  "gui.biometech.radius": "Radio: %s",
+  "gui.biometech.button.clear_biome": "Clic para quitar el bioma!",
+  "gamerule.biometech:fuel_per_change": "Cantidad de combustible para un solo cambio de bioma",
+  "gamerule.biometech:uses_per_essence": "Cantidad de usos de una sola Esencia de Bioma",
+  "gamerule.biometech:delay_between_changes": "Retraso (en ticks) entre cambios de bioma",
+  "gamerule.biometech:max_checks_per_tick": "Número máximo de chequeos de bioma por tick",
+  "gamerule.biometech:max_radius": "Radio máximo del Convertidor de Bioma",
+  "gamerule.biometech:wandering_traders_sell_essence": "Vendedores Ambulantes venden Esencia de Bioma"
+}
