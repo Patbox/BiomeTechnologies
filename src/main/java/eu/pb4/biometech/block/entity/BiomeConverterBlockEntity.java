@@ -7,18 +7,17 @@ import eu.pb4.biometech.util.BGameRules;
 import eu.pb4.biometech.util.BiomeConverterLike;
 import eu.pb4.biometech.util.ModUtil;
 import eu.pb4.biometech.block.BiomeConverterBlock;
-import eu.pb4.biometech.block.model.ArmorStandHologramElement;
 import eu.pb4.biometech.block.model.HeadModels;
 import eu.pb4.biometech.gui.ConverterGui;
 import eu.pb4.biometech.util.SidedRedirectedInventory;
-import eu.pb4.holograms.api.elements.EmptyHologramElement;
-import eu.pb4.holograms.api.elements.SpacingHologramElement;
-import eu.pb4.holograms.api.holograms.WorldHologram;
+import eu.pb4.polymer.virtualentity.api.ElementHolder;
+import eu.pb4.polymer.virtualentity.api.attachment.ChunkAttachment;
+import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -40,6 +39,7 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -51,10 +51,10 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
     public int energy = 0;
     @Nullable
     public RegistryKey<Biome> currentBiomeId = null;
-    private WorldHologram hologram = null;
+    private ElementHolder elementHolder;
     private boolean isActive;
     private boolean isActiveTexture;
-    private ArmorStandHologramElement mainElement;
+    private ItemDisplayElement mainElement;
     private double yDelta = 0;
     private int conversionProgress = 0;
     private int tickDelay = -1;
@@ -70,6 +70,8 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
     private int[] slots = IntStream.concat(IntStream.of(this.fuelInventoryStack.slots()), IntStream.of(this.essenceInventoryStack.slots())).toArray();
     @Nullable
     private GameProfile lastPlayer;
+    private float currentRotation;
+    private final Matrix4f matrix = new Matrix4f();
 
 
     public BiomeConverterBlockEntity(BlockPos pos, BlockState state) {
@@ -118,22 +120,16 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
 
     public void tick() {
         var world = (ServerWorld) this.world;
-        double armorStandHeight = 1.8;//0.9;
 
-        if (hologram == null) {
-            this.hologram = new WorldHologram(world, Vec3d.ofBottomCenter(this.getPos()));
-            this.mainElement = new ArmorStandHologramElement();
-            //((ArmorStandEntityAccessor) this.mainElement.entity).callSetMarker(true);
-            //((ArmorStandEntityAccessor) this.mainElement.entity).callSetSmall(true);
-            this.mainElement.entity.setInvisible(true);
-            this.mainElement.entity.equipStack(EquipmentSlot.HEAD, HeadModels.create(this.isActiveTexture));
-            this.mainElement.setOffset(new Vec3d(0, -armorStandHeight + 0.5, 0));
-            this.hologram.addElement(new EmptyHologramElement());
-            this.hologram.addElement(new SpacingHologramElement(1.3));
-            this.hologram.addElement(this.mainElement);
-
-
-            this.hologram.show();
+        if (elementHolder == null) {
+            this.elementHolder = new ElementHolder();
+            this.mainElement = new ItemDisplayElement();
+            this.mainElement.setModelTransformation(ModelTransformationMode.FIXED);
+            this.mainElement.setItem(HeadModels.create(this.isActiveTexture));
+            this.mainElement.setInterpolationDuration(2);
+            this.mainElement.setScale(new Vector3f(1.5f));
+            this.elementHolder.addElement(this.mainElement);
+            ChunkAttachment.of(elementHolder, world, this.pos);
         }
 
 
@@ -159,17 +155,15 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
 
 
         if (this.yDelta != 0) {
-            var yPos = (Math.sin(this.world.getTime() / 20d) + 0.3) * this.yDelta * 0.12 - 0.1;
+            var yPos = (float) ((Math.sin(this.world.getTime() / 20d)) * this.yDelta * 0.05);
 
-            if (yPos < -0.06) {
-                yPos = Math.abs(yPos) - 0.12;
+            if (this.world.getTime() % 2 == 0) {
+                this.currentRotation = (float) MathHelper.wrapDegrees(this.currentRotation + this.yDelta * this.yDelta * 4);
+                this.mainElement.startInterpolation();
+                this.mainElement.setTransformation(this.matrix.translation(0, yPos, 0).scale(1.5f).rotateY(this.currentRotation * MathHelper.RADIANS_PER_DEGREE));
+                this.elementHolder.tick();
             }
-
-            this.mainElement.entity.setYaw((float) (this.mainElement.entity.getYaw() + this.yDelta * this.yDelta * 4));
-            this.mainElement.setOffset(new Vec3d(0, yPos - armorStandHeight + 0.5, 0));
-
             //var base = MathHelper.hsvToRgb((float) (MathHelper.wrapDegrees(this.world.getTime() / 2d) * MathHelper.RADIANS_PER_DEGREE), 0.9f, 0.9f);
-
 
             var base = ModUtil.getBiomeColor(this.currentBiome);
 
@@ -379,9 +373,7 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
         this.consumeEssence();
 
         if (this.world.getTime() % 40 == 0 && this.dirtChunks.size() > 0) {
-            for (var chunk : this.dirtChunks) {
-                ModUtil.updateChunk(chunk);
-            }
+            ((ServerWorld) this.world).getChunkManager().threadedAnvilChunkStorage.sendChunkBiomePackets(new ArrayList<>(this.dirtChunks));
             this.dirtChunks.clear();
         }
     }
@@ -412,7 +404,7 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
 
     private void setTexture(boolean active) {
         if (this.isActiveTexture != active) {
-            this.mainElement.entity.equipStack(EquipmentSlot.HEAD, HeadModels.create(active));
+            this.mainElement.setItem(HeadModels.create(active));
             this.isActiveTexture = active;
         }
     }
@@ -460,18 +452,17 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
 
     @Override
     public void markRemoved() {
-        if (this.hologram != null) {
-            this.hologram.hide();
+        if (this.elementHolder != null) {
+            this.elementHolder.destroy();
+            this.mainElement = null;
         }
 
         if (this.world.getTime() % 10 == 0 && this.dirtChunks.size() > 0) {
-            for (var chunk : this.dirtChunks) {
-                ModUtil.updateChunk(chunk);
-            }
+            ((ServerWorld) this.world).getChunkManager().threadedAnvilChunkStorage.sendChunkBiomePackets(new ArrayList<>(this.dirtChunks));
             this.dirtChunks.clear();
         }
 
-        this.hologram = null;
+        this.elementHolder = null;
     }
 
     public void setActive(boolean active, @Nullable GameProfile profile) {
@@ -483,7 +474,6 @@ public class BiomeConverterBlockEntity extends BlockEntity implements SidedRedir
             this.conversionPos.set(0, 0, 0);
             if (this.mainElement != null && !active && this.isActiveTexture) {
                 this.setTexture(false);
-                this.mainElement.markDirty();
             }
 
             if (active) {

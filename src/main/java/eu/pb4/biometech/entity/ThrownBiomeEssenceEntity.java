@@ -15,6 +15,8 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class ThrownBiomeEssenceEntity extends ThrownItemEntity implements PolymerEntity {
     public ThrownBiomeEssenceEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
@@ -41,7 +43,7 @@ public class ThrownBiomeEssenceEntity extends ThrownItemEntity implements Polyme
                 }
 
                 ModUtil.setBiome((ServerWorld) this.world, pos.getX(), pos.getY(), pos.getZ(), biome,
-                        this.getOwner() instanceof PlayerEntity player ? player.getGameProfile() : null, ModUtil::updateChunk);
+                        this.getOwner() instanceof PlayerEntity player ? player.getGameProfile() : null, c -> ((ServerWorld) this.world).getChunkManager().threadedAnvilChunkStorage.sendChunkBiomePackets(List.of(c)));
                 this.world.syncWorldEvent(2007, this.getBlockPos(), color);
             }
         }

@@ -228,10 +228,6 @@ public class ModUtil {
         return out;
     }
 
-    public static void updateChunk(WorldChunk chunk) {
-        ((ServerWorld) chunk.getWorld()).getChunkManager().threadedAnvilChunkStorage.sendChunkPacketToWatchingPlayers(chunk);
-    }
-
     public static int getBiomeColor(RegistryEntry<Biome> biome) {
         int color = BIOME_COLORS.getInt(biome);
         if (color == -1) {
